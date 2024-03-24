@@ -10,10 +10,9 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('manager_id')->nullable()->references('id')->on('users')
-                ->cascadeOnUpdate()
-                ->nullOnDelete();
+        Schema::create('location_tenant_request', function (Blueprint $table) {
+            $table->foreignId('location_id')->constrained('locations')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreignId('tenant_request')->constrained('tenant_requests')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
 
@@ -22,8 +21,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropForeign('manager_id');
-        });
+        Schema::dropIfExists('location_tenant_request');
     }
 };
