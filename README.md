@@ -1,5 +1,5 @@
 @startuml
-!theme mars
+!theme blueprint
 
 title Property Faster UML Diagram
 
@@ -70,9 +70,61 @@ created_at: timestamp
 updated_at: timestamp
 }
 
+class Location {
+id: int (PK)
+name: json(150)
+type: varchar(255)
+location_schema: varchar(255)
+latitude: decimal(11, 8) {nullable}
+longitude: decimal(11, 8) {nullable}
+radius: decimal(10, 2) {nullable}
+parent_id: int (FK) {nullable}
+created_at: timestamp
+updated_at: timestamp
+}
+
+class TagCategory {
+id: int (PK)
+name: json
+created_at: timestamp
+updated_at: timestamp
+}
+
+class Tag {
+id: int (PK)
+name: json
+icon: varchar(255)
+price_type: varchar(255)
+type: varchar(255)
+parent_id: int (FK) {nullable}
+created_at: timestamp
+updated_at: timestamp
+}
+
+class Property {
+id: int (PK)
+name: json
+description: json
+meta_data: json
+slug_en: string
+slug_ar: string
+price: json
+location_id: int (FK)
+user_id: int (FK)
+active: boolean
+created_at: timestamp
+updated_at: timestamp
+}
+
 User <.> User : manages (optional)
-User "*" -- "1" Franchise : belongs to (composition)
+User "1" -- "1..*" Franchise : Works at
 User "1" -- "*" PasswordResetToken : has password reset tokens
 User "1" -- "*" PersonalAccessToken : has personal access tokens
+User "1" -- "*" Property : owns
+Property "0..*" -- "*" Tag : has tags (with Pivot Type: "main", "chield")
+Property "1" -- "0..1" Location : located at (belongs to)
 Corporate "1" -- "*" Franchise : owns
+Franchise <..> User : has manager (optional)
+Location "0..1" -- "1" Location : has parent (optional)
+Tag ".." <--> TagCategory : categorized under (many-to- many)
 @enduml
