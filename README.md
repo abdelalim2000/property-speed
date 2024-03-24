@@ -194,6 +194,43 @@ created_at: timestamp
 updated_at: timestamp
 }
 
+class Report {
+id: int (PK)
+user_id: int (FK)
+reportable_type: string
+reportable_id: unsignedBigInteger
+subject: varchar(70)
+message: text
+status: varchar(50) default 'pending'
+created_at: timestamp
+updated_at: timestamp
+}
+
+class ShortList {
+id: int (PK)
+user_id: int (FK)
+listable_type: string
+listable_id: unsignedBigInteger
+status: varchar(50) default 'pending'
+rate: decimal(2, 1)
+note: text
+created_at: timestamp
+updated_at: timestamp
+}
+
+class Offer {
+id: int (PK)
+sender_id: int (FK)
+receiver_id: int (FK)
+property_id: int (FK)
+request_id: int (FK)
+parent_id: int (FK) nullable
+budget: json
+status: string default 'default'
+created_at: timestamp
+updated_at: timestamp
+}
+
 User <.> User : manages (optional)
 User "1" -- "1..*" Franchise : Works at
 User <.> UserScore : have
@@ -207,9 +244,13 @@ User "0..1" -- "*" TenantRequest : manages (optional)
 User "0..1" -- "*" Property : manages (optional)
 User "1" -- "*" UserFeedback : sends (optional)
 User "*" -- "1" UserFeedback : receives (optional)
+User "1" -- "*" Offer : sends offers (optional)
+User "*" -- "*" Offer : receives offers (optional)
 Property "0..*" -- "*" Tag : has tags (with Pivot Type: "main", "child")
 Property "*" -- "*" Option : has options (with Pivot Values)
 Property "1" -- "0..1" Location : located at (belongs to)
+Property <|.. ShortList : can be shortlisted
+Property "*" -- "*" Offer : receives offers (optional)
 Corporate "1" -- "*" Franchise : owns
 Franchise <..> User : has manager (optional)
 Location "0..1" -- "1" Location : has parent (optional)
@@ -218,4 +259,11 @@ Tag ".." <--> TagCategory : categorized under (many-to- many)
 Tag "0..*" -- "*" Option : has options (via option_tag)
 TenantRequest "1" -- "1" Tag : categorized under
 TenantRequest "*" -- "*" Option : has options (with Pivot Values)
+TenantRequest <|.. ShortList : can be shortlisted
+TenantRequest "*" -- "*" Offer : receives offers (optional)
+Report -- "*" Franchise : can report (polymorphic)
+Report -- "*" Property : can report (polymorphic)
+Report -- "*" TenantRequest : can report (polymorphic)
+Report -- "*" User : can report (polymorphic)
+Offer "0..1" --> Offer : replies to (optional)
 @enduml
