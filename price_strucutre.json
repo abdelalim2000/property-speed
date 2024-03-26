@@ -1,0 +1,41 @@
+{
+   "currency":"USD",
+   "type":"rent / primary / resale",
+   "min_price":1000.00,
+   "max_price":1000.00,
+   "rent_periodicity":"Monthly",
+   "down_payment":20000.00,
+   "security_deposit":{
+      "type":"months / money",
+      "amount":1000
+   },
+   "installment_months":24,
+   "monthly_installment_payment":2500,
+   "dynamic_price":[
+      {
+         "date":"2024-06-30",
+         "price":950.00
+      },
+      {
+         "date":"2024-05-30",
+         "price":1000.00
+      }
+   ],
+   "additional_fees":[
+      {
+         "category":"required",
+         "name":"Cleaning Fee",
+         "amount":100.00
+      },
+      {
+         "category":"required",
+         "name":"Security Deposit",
+         "amount":500.00
+      },
+      {
+         "category":"optional",
+         "name":"Pet Fee",
+         "amount":50.00
+      }
+   ]
+}
