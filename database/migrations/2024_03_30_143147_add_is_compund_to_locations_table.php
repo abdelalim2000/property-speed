@@ -11,8 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('lead_score', function (Blueprint $table) {
-            $table->string('category')->after('score');
+        Schema::table('locations', function (Blueprint $table) {
+            $table->boolean('is_compound')->after('radius')->default(false);
         });
     }
 
@@ -21,8 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('lead_score', function (Blueprint $table) {
-            $table->dropColumn('category');
+        Schema::table('locations', function (Blueprint $table) {
+            $table->dropColumn('is_compound');
         });
     }
 };

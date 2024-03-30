@@ -26,7 +26,7 @@ created_at: timestamp
 updated_at: timestamp
 }
 
-class UserScore {
+class LeadScore {
 id: int (PK)
 user_id: int (FK)
 score: json
@@ -130,6 +130,7 @@ location_schema: varchar(255)
 latitude: decimal(11, 8) {nullable}
 longitude: decimal(11, 8) {nullable}
 radius: decimal(10, 2) {nullable}
+is_compound: bool {default false}
 parent_id: int (FK) {nullable}
 created_at: timestamp
 updated_at: timestamp
@@ -206,7 +207,21 @@ created_at: timestamp
 updated_at: timestamp
 }
 
-class ShortList {
+class Offer {
+id: int (PK)
+sender_id: int (FK)
+receiver_id: int (FK)
+property_id: int (FK) {nullable}
+request_id: int (FK) {nullable}
+parent_id: int (FK) nullable
+budget: json
+status: varchar(255) default 'default'
+created_at: timestamp
+updated_at: timestamp
+}
+
+
+class OfferStatus {
 id: int (PK)
 user_id: int (FK)
 listable_type: string
@@ -218,22 +233,9 @@ created_at: timestamp
 updated_at: timestamp
 }
 
-class Offer {
-id: int (PK)
-sender_id: int (FK)
-receiver_id: int (FK)
-property_id: int (FK)
-request_id: int (FK)
-parent_id: int (FK) nullable
-budget: json
-status: string default 'default'
-created_at: timestamp
-updated_at: timestamp
-}
-
 User <.> User : manages (optional)
 User "1" -- "1..*" Franchise : Works at
-User <.> UserScore : have
+User <.> LeadScore : have
 User "1" -- "*" PasswordResetToken : has password reset tokens
 User "1" -- "*" PersonalAccessToken : has personal access tokens
 User "1" -- "*" Property : owns
@@ -244,13 +246,13 @@ User "0..1" -- "*" TenantRequest : manages (optional)
 User "0..1" -- "*" Property : manages (optional)
 User "1" -- "*" UserFeedback : sends (optional)
 User "*" -- "1" UserFeedback : receives (optional)
-User "1" -- "*" Offer : sends offers (optional)
-User "*" -- "*" Offer : receives offers (optional)
+User "1" -- "*" Offer: sends offers (optional)
+User "1" -- "*" Offer: receives offers (optional)
 Property "0..*" -- "*" Tag : has tags (with Pivot Type: "main", "child")
 Property "*" -- "*" Option : has options (with Pivot Values)
 Property "1" -- "0..1" Location : located at (belongs to)
-Property <|.. ShortList : can be shortlisted
-Property "*" -- "*" Offer : receives offers (optional)
+Property <|.. OfferStatus : can be shortlisted
+Property "0..1" -- "*" Offer: receives offers (optional)
 Corporate "1" -- "*" Franchise : owns
 Franchise <..> User : has manager (optional)
 Location "0..1" -- "1" Location : has parent (optional)
@@ -259,11 +261,11 @@ Tag ".." <--> TagCategory : categorized under (many-to- many)
 Tag "0..*" -- "*" Option : has options (via option_tag)
 TenantRequest "1" -- "1" Tag : categorized under
 TenantRequest "*" -- "*" Option : has options (with Pivot Values)
-TenantRequest <|.. ShortList : can be shortlisted
-TenantRequest "*" -- "*" Offer : receives offers (optional)
+TenantRequest <|.. OfferStatus : can be shortlisted
+TenantRequest "0..1" -- "*" Offer: receives offers (optional)
+Offer "0..1" -- Offer: replies to (optional)
 Report -- "*" Franchise : can report (polymorphic)
 Report -- "*" Property : can report (polymorphic)
 Report -- "*" TenantRequest : can report (polymorphic)
 Report -- "*" User : can report (polymorphic)
-Offer "0..1" --> Offer : replies to (optional)
 @enduml
